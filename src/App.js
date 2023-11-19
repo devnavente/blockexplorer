@@ -1,36 +1,56 @@
-import { Alchemy, Network } from 'alchemy-sdk';
-import { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 
+/** Components */
+import BlockList from './components/BlockList';
+import BlockDetail from "./components/BlockDetail";
+/** Styles */
 import './App.css';
 
-// Refer to the README doc for more information about using API
-// keys in client-side code. You should never do this in production
-// level code.
-const settings = {
-  apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
-  network: Network.ETH_MAINNET,
-};
+/**
+ * TODO:
+ * 
+ * - when clicked on the block
+ * - show more info about the block:
+ * -- age (timestamp) 
+ * -- transactions list
+ * 
+ *  * 
+ * - when clicked on the transaction, show:
+ * -- txn hash
+ * -- block
+ * -- age (timestamp comes only if transaction has been mined)
+ * -- sender
+ * -- recipient (EOA or contract?)
+ * -- value
+ *
+ * - when clicked on an address (sender, recipient, miner, etc.)
+ * -- show balance
+ * -- take to profile on ethereum
+ * 
+ * - when clicked on the address of a contract, 
+ * -- show balance
+ * -- show deployer (clicking works the same as "when clicked on an address")
+ * -- take to profile on ethereum
+ * 
+ * - STYLES
 
-
-// In this week's lessons we used ethers.js. Here we are using the
-// Alchemy SDK is an umbrella library with several different packages.
-//
-// You can read more about the packages here:
-//   https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
-const alchemy = new Alchemy(settings);
+ */
 
 function App() {
-  const [blockNumber, setBlockNumber] = useState();
 
-  useEffect(() => {
-    async function getBlockNumber() {
-      setBlockNumber(await alchemy.core.getBlockNumber());
-    }
-
-    getBlockNumber();
-  });
-
-  return <div className="App">Block Number: {blockNumber}</div>;
+  return <Router>
+    <header>
+      <Link to="/">
+        Block explorer
+      </Link>
+    </header>
+    <main className="App">
+      <Switch>
+        <Route path="/" exact component={BlockList} />
+        <Route path="/block/:number"  component={BlockDetail} />
+      </Switch>
+    </main>
+  </Router>;
 }
 
 export default App;
