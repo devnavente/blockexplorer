@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getLatestBlockNumber, getLastTenBlocksData } from '../utils';
+import { getLatestBlockNumber, getLastTenBlocksData } from '../helpers/block-helpers';
 import { Link } from "react-router-dom";
 
 function BlockList() {

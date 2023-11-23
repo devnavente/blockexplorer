@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getBlockData, calculateGasPricesInBlock } from '../utils';
+import { getBlockData } from '../helpers/block-helpers';
+import { calculateGasPricesInBlock } from '../helpers/gas-helpers';
 
 /** Components */
 import { TransactionsList } from './TransactionsList';
