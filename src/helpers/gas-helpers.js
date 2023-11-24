@@ -34,3 +34,8 @@ export async function calculateGasPricesInBlock(blockNumber) {
     console.log('gas prices!', highest, lowest, average);
     return { highest, lowest, average };
 }
+
+export async function getGasUsage(tx) {
+    let transactionData = await getTransactionData(tx);
+    return getWeiValueFromGasObject(transactionData.gasUsed);
+}

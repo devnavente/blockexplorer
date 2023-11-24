@@ -5,7 +5,7 @@ function Search() {
 
     return (<>
         <form className="Search">
-            <label for="search" className="sr-only">Search:</label>
+            <label htmlFor="search" className="sr-only">Search:</label>
             <input 
                 type="search" 
                 placeholder="Block number, txn hash, address..."

@@ -10,6 +10,10 @@ import Address from './pages/Address';
 import './App.css';
 
 /**
+ * 
+ * Big ints!
+ * Handle errors
+ * 
  * TODO: Components
  * 
  * - SearchBlock

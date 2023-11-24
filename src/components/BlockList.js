@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getLatestBlockNumber, getLastTenBlocksData } from '../helpers/block-helpers';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 function BlockList() {
 
@@ -13,40 +13,39 @@ function BlockList() {
         }
 
         getData();
-      
+
     }, []);
 
     return (<>
-        {blocksData.length === 0 ? 'loading' : 
-            (<table>
-                <thead>
-                    <tr>
-                        <th>Block</th>
-                        <th>Mined by</th>
-                        <th>Age</th>
-                        <th>Txn</th>
-                        <th>Gas used</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {blocksData.map((block) => (
-                        <tr key={block.number}>
-                            <td>
-                                <Link to={`/block/${block.number}`}>
-                                    {block.number}
-                                </Link>
-                            </td>
-                            <td>{block.miner}</td>
-                            <td>{block.age}</td>
-                            <td>{block.height}</td>
-                            <td>{block.intGasUsed} ({block.gasUsedPercentage} %)</td>
-                        </tr>
-                    ))}
-                </tbody>
-
-            </table>)
+        {blocksData.length === 0 ? 'loading' :
+            (<ul className="BlockList">
+                {blocksData.map((block) => <BlockSummary key={block.number} data={block}/>)}
+            </ul>)
         }
     </>)
 }
 
+function BlockSummary({ data }) {
+    // 0xF156665C07b0D5396470b790763D5586979aDF49
+    return (
+        <li className="BlockSummary">
+            <div>
+                <p><Link to={`/block/${data.number}`}>{data.number}</Link></p>
+                <p className="text--light">{data.age}</p>
+            </div>
+            <div>
+                <p className="miner">Fee Recipient <Link to={`/address/${data.miner}`}>{data.miner}</Link></p>
+                <p><Link to={`/txns?block=${data.number}`}>{data.txns} txns</Link></p>
+            </div>
+
+            <p className="reward">{data.rewardETH} ETH</p>
+        </li>
+    )
+}
+
 export default BlockList;
+
+/**
+ * TODO:
+ * - MORE cta loads prev 10 blocks
+ */

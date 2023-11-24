@@ -4,8 +4,14 @@
   box-sizing: border-box;
 }
 
+:root {
+  --lightgray: rgba(0,0,0,0.2);
+  --blue-bootstrap: #0d6efd;
+}
+
 header {
-  background-color: black;
+  background-color: #0F2027;
+  padding-bottom: 100px;
 }
 
 header > div {
@@ -13,6 +19,22 @@ header > div {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
+}
+
+main {
+  background: #c31432;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #240b36, #c31432);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #240b36, #c31432); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  min-height: 100vh;
+}
+
+main > div {
+  top: -100px;
+  position: relative;
+}
+
+a {
+  color: var(--blue-bootstrap);
 }
 
 .sr-only {
@@ -30,12 +52,36 @@ header > div {
   max-width: 1200px;
 }
 
+.max-width--700 {
+  max-width: 700px;
+}
+
+.max-width--900 {
+  max-width: 900px;
+}
+
 .margin--auto {
   margin: auto;
 }
 
 .padding--25 {
   padding: 25px;
+}
+
+.bg--white {
+  background-color: white;
+}
+
+.bg--lightgray {
+  background-color: lightgrey;
+}
+
+.text--light {
+  color: rgba(0,0,0,0.6);
+}
+
+.border-radius--15px {
+   border-radius: 15px;
 }
 
 .flex--center {
@@ -55,6 +101,15 @@ header > div {
   margin-bottom: 10px;
 }
 
+/** Pages */
+.Home h1 {
+  padding-bottom: 10px;
+  border-bottom: 2px solid;
+  border-color: var(--lightgray);
+  margin-bottom: 0.75em;
+}
+
+/** Components */
 .Search {
   flex-grow: 2;
   text-align: right;
@@ -75,11 +130,38 @@ header > div {
   width: 75%;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+  border: 1px solid white;
 }
 
 .Search button {
   width: 25%;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  background-color: #1aff1a;
+  background-color: #c31432;
+  border: 1px solid white;
+  color: white;
+}
+
+.BlockSummary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em 0;
+  border-bottom: 1px solid var(--lightgray);
+  flex-wrap: wrap;
+}
+
+.BlockSummary p {
+  margin-bottom: 0.7em;
+}
+
+.BlockSummary .miner a {
+  line-break: anywhere;
+}
+
+.BlockSummary .reward {
+  border-radius: 5px;
+  border: 1px solid var(--lightgray);
+  padding: 0.5em;
+  font-size: 0.85rem;
 }
