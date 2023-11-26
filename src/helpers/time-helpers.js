@@ -1,8 +1,8 @@
-const decisecondsInA = {
-    day: 864000,
-    hour: 36000,
-    minute: 600,
-    second: 10
+const millisecondsInA = {
+    day: 86400000,
+    hour: 3600000,
+    minute: 60000,
+    second: 1000
 };
 
 /**
@@ -14,47 +14,47 @@ const decisecondsInA = {
  */
 export function getAgeStrFromTimestamp(timestamp) {
 
-    let now = Date.now().toString();
-    // removes the milli and centiseconds from the timestamp 
-    // to match the deciseconds from the block
-    now = parseInt(now.slice(0, now.length - 3)); 
+    let now = Date.now();
+
+    // unix time -> date -> js timestamp
+    timestamp = new Date(timestamp * 1000).getTime();
 
     const difference = now - timestamp;
-    const age = getAgeObjFromDeciseconds(difference);
+    const age = getAgeObjFromMilliseconds(difference);
 
     return getAgeStrFromObject(age);
 }
 
 /**
- * Transform deciseconds to days + hours + minutes + seconds
+ * Transform milliseconds to days + hours + minutes + seconds
  *
- * @param {int} deciseconds
+ * @param {int} milliseconds
  * @return {Object} properties: days, hours, minutes, seconds
  *
  */
-function getAgeObjFromDeciseconds(deciseconds) {
-    const output = {};
+function getAgeObjFromMilliseconds(milliseconds) {
+    const age = {};
 
-    if (deciseconds > decisecondsInA.day) { // days + hours
-        output.days = transformDeciseconds(deciseconds, 'day');
-        deciseconds = deciseconds - (decisecondsInA.day * output.days);
+    if (milliseconds > millisecondsInA.day) { // days + hours
+        age.days = transformMilliseconds(milliseconds, 'day');
+        milliseconds = milliseconds - (millisecondsInA.day * age.days);
     } 
     
-    if (deciseconds > decisecondsInA.hour) { // hours + minutes
-        output.hours = transformDeciseconds(deciseconds, 'hour');
-        deciseconds = deciseconds - (decisecondsInA.hour * output.hours);
+    if (milliseconds > millisecondsInA.hour) { // hours + minutes
+        age.hours = transformMilliseconds(milliseconds, 'hour');
+        milliseconds = milliseconds - (millisecondsInA.hour * age.hours);
     }
     
-    if (deciseconds > decisecondsInA.minute) { // minutes
-        output.minutes = transformDeciseconds(deciseconds, 'minute');
-        deciseconds = deciseconds - (decisecondsInA.minute * output.minutes);
+    if (milliseconds > millisecondsInA.minute) { // minutes
+        age.minutes = transformMilliseconds(milliseconds, 'minute');
+        milliseconds = milliseconds - (millisecondsInA.minute * age.minutes);
     } 
     
-    if (deciseconds > 0) { // seconds
-        output.seconds = transformDeciseconds(deciseconds);
+    if (milliseconds > 0) { // seconds
+        age.seconds = transformMilliseconds(milliseconds);
     }
 
-    return output;
+    return age;
 }
 
 /**
@@ -66,50 +66,45 @@ function getAgeObjFromDeciseconds(deciseconds) {
  */
 function getAgeStrFromObject(age) {
 
-    let output = '';
+    let str = '';
 
     if (age.days) {
-        output += age.days.toString();
-        output += age.days === 1 ? ` day `: ` days `;
+        str += age.days.toString();
+        str += age.days === 1 ? ` day `: ` days `;
     }
 
     if (age.hours) {
-        output += age.hours.toString();
-        output += age.hours === 1 ? ` hr `: ` hrs `;
+        str += age.hours.toString();
+        str += age.hours === 1 ? ` hr `: ` hrs `;
     }
 
     if (!age.days && age.minutes) {
-        output += age.minutes.toString();
-        output += age.minutes === 1 ? ` min `: ` mins `;
+        str += age.minutes.toString();
+        str += age.minutes === 1 ? ` min `: ` mins `;
     }
 
     if (!age.days && !age.hours && age.seconds) {
-        output += age.seconds.toString();
-        output += age.seconds === 1 ? ` sec `: ` secs `;
+        str += age.seconds.toString();
+        str += age.seconds === 1 ? ` sec `: ` secs `;
     }
 
-    return output + 'ago';
+    return str + 'ago';
 }
 
 /**
- * Transforms deciseconds into a different unit.
+ * Transforms milliseconds into a different unit.
  *
- * @param {int} deciseconds
+ * @param {int} milliseconds
  * @param {string} unit
  * @return {int} 
  * 
- * @example transformdeciseconds(1000) === 1; 
+ * @example transformMilliseconds(1000) === 1; 
  *
  */
-function transformDeciseconds(deciseconds, unit = 'second') {
-    const reference = decisecondsInA[unit];
+function transformMilliseconds(milliseconds, unit = 'second') {
+    const reference = millisecondsInA[unit];
     
-    let rest = deciseconds;
-    let output = 0;
-    while (rest >= reference) {
-        rest = rest / reference;
-        output++;
-    }
+    let output = Math.floor(milliseconds / reference);
 
     return output;
 }

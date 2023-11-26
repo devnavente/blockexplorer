@@ -5,28 +5,46 @@ import { Link } from 'react-router-dom';
 function BlockList() {
 
     const [blocksData, setBlocksData] = useState([]);
+    const [nextBlock, setNextBlock] = useState();
 
     useEffect(() => {
         const getData = async () => {
             let latest = await getLatestBlockNumber();
             setBlocksData(await getLastTenBlocksData(latest));
+            setNextBlock(latest - 10);
         }
 
         getData();
 
     }, []);
 
+    const getTenMore = async (block) => {
+        const cta = document.querySelector('button#moreBlocks');
+        cta.innerText = '...';
+        cta.setAttribute('disabled', 'disabled');
+
+        const newBlocksData = await getLastTenBlocksData(block);
+        setBlocksData([...blocksData, ...newBlocksData]);
+        setNextBlock(block - 10);
+
+        cta.innerText = 'More';
+        cta.removeAttribute('disabled');
+    }
+
     return (<>
         {blocksData.length === 0 ? 'loading' :
-            (<ul className="BlockList">
-                {blocksData.map((block) => <BlockSummary key={block.number} data={block}/>)}
-            </ul>)
+            (<div className="BlockList">
+                <ul>
+                    {blocksData.map((block) => <BlockSummary key={block.number} data={block}/>)}
+                </ul>
+                <button id="moreBlocks" className="cta" onClick={() => getTenMore(nextBlock)}>More</button>
+            </div>)
         }
     </>)
 }
 
 function BlockSummary({ data }) {
-    // 0xF156665C07b0D5396470b790763D5586979aDF49
+
     return (
         <li className="BlockSummary">
             <div>
@@ -34,8 +52,8 @@ function BlockSummary({ data }) {
                 <p className="text--light">{data.age}</p>
             </div>
             <div>
-                <p className="miner">Fee Recipient <Link to={`/address/${data.miner}`}>{data.miner}</Link></p>
-                <p><Link to={`/txns?block=${data.number}`}>{data.txns} txns</Link></p>
+                <p className="miner">Fee Recipient <Link className="breakline-anywhere" to={`/address/${data.miner}`}>{data.miner}</Link></p>
+                <p><Link to={`/txns/${data.number}`}>{data.txns} txns</Link></p>
             </div>
 
             <p className="reward">{data.rewardETH} ETH</p>
@@ -44,8 +62,3 @@ function BlockSummary({ data }) {
 }
 
 export default BlockList;
-
-/**
- * TODO:
- * - MORE cta loads prev 10 blocks
- */

@@ -1,6 +1,6 @@
 import { Alchemy, Network, Utils } from 'alchemy-sdk';
 import { getAgeStrFromTimestamp } from './time-helpers';
-import { getTransactionData } from './transaction-helpers';
+//import { lookupAddress } from './address-helpers';
 
 // Refer to the README doc for more information about using API
 // keys in client-side code. You should never do this in production
@@ -25,6 +25,27 @@ export async function getLatestBlockNumber() {
 }
 
 /**
+ * Checks if the given string is a valid block number.
+ *
+ * @param {string} x
+ * @return {boolean} true if block exists
+ *
+ */
+export async function isBlock(x) {
+    try {
+        if (parseInt(x).toString() !== x) return false;
+
+        x = parseInt(x);
+        const block = await alchemy.core.getBlock(x);
+        //console.log(block);
+        return block !== null;
+    } catch (err) {
+        //console.log('error isBlock',err)
+        return false;
+    }
+}
+
+/**
  * Given a block number, retrieves its data.
  *
  * @param {string} blockNumber
@@ -37,24 +58,25 @@ export async function getBlockData(blockNumber) {
 
     const { gasLimit, gasUsed, transactions, timestamp, baseFeePerGas, hash } = blockData;
 
-    blockData.intGasLimit = parseInt(gasLimit.toBigInt().toString());
-    blockData.intGasUsed = parseInt(gasUsed.toBigInt().toString());
-    blockData.gasUsedPercentage = Math.round(
+    blockData.intGasLimit = parseInt(gasLimit['_hex'], 16);
+    blockData.intGasUsed = parseInt(gasUsed['_hex'], 16);
+    blockData.gasUsedPercentage = (
         blockData.intGasUsed / (blockData.intGasLimit / 100)
     ).toFixed(2);
 
     blockData.txns = transactions.length;
     blockData.age = getAgeStrFromTimestamp(timestamp);
+    blockData.date = new Date(timestamp * 1000).toString();
 
     blockData.reward = await getBlockReward({
-        //number: blockNumber,
-        //transactions,
         baseFeePerGas,
         gasUsed,
         hash
     });
 
     blockData.rewardETH = Utils.formatEther(blockData.reward.toString()).slice(0, 7);
+
+    //blockData.minerName = await lookupAddress(blockData.miner);
 
     return blockData;
 }
@@ -88,17 +110,26 @@ export async function getLastTenBlocksData(blockNumber) {
 
 }
 
+/**
+ * Calculates the reward granted for a specific block.
+ *
+ * @param {Object} blockData
+ * @return {int} reward in Wei
+ *
+ */
 async function getBlockReward(blockData) {
 
     let tips = [];
     let sumTips = 0;
     
     //The response returns the transaction receipts of the `blockNumber`
-    let { receipts } = await alchemy.core.getTransactionReceipts({blockNumber: blockData.hash});
+    const data = await alchemy.core.getTransactionReceipts({blockNumber: blockData.hash});
+    
+    if (!data.receipts || data.receipts.length === 0) return 0;
+
+    const { receipts } = data;
 
     for (const tx of receipts) {
-        //const data = await getTransactionData(tx);
-        //const { gasUsed } = await alchemy.core.getTransactionReceipt(tx.hash);
         const totalFee = parseInt(tx.gasUsed, 16) * parseInt(tx.effectiveGasPrice, 16);
 
         tips.push(Number(totalFee.toString()));
@@ -126,11 +157,6 @@ async function getBlockReward(blockData) {
 
     return blockReward;
 
-}
-
-async function getUncleBlock(hash) {
-    const blockData = await alchemy.core.getBlockByHash(hash);
-    return blockData;
 }
 
 

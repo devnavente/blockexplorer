@@ -1,22 +1,18 @@
+import { useParams, Link } from 'react-router-dom';
+import TransactionsList from '../components/TransactionsList';
+
 function Transactions() {
-    return <p>Transactions</p>;
-}
+    const { number } = useParams();
+
+    return (<>
+        <div className="Transactions max-width--900 margin--auto padding--25">
+            <div className="bg--white border-radius--15px padding--25">
+                <h1>Transactions in block <Link to={`/block/${number}`}>{number}</Link>
+                </h1>
+
+                <TransactionsList number={number}/>
+            </div>
+        </div>
+    </>);}
 
 export default Transactions;
-
-/**
- * TODO: 
-
-* # Transactions list: (component, 2 types: by block, by address)
- * /txs?block=:number
- * 
- * -- table
- * --> txn hash
- * --> age
- * --> from
- * --> to
- * --> value
- * --> txn fee
- * --> block (only by address)
- * -------------------------------------------------------
-*/

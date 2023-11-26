@@ -13,19 +13,3 @@ function Home() {
 }
 
 export default Home;
-
-/**
- * TODO: Views / routes
- * 
- * # Home / block explorer: 
- * -- explorer (search)
- * -- last 10 blocks with info:
- * ---> block number
- * ---> block age
- * ---> miner
- * ---> number of transactions
- * ---> transactions time (how long between 1st and last)
- * ---> reward 
- * -------------------------------------------------------
- * 
- */
