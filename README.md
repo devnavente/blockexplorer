@@ -4,6 +4,8 @@ This explorer gives us the ability to view different information about the block
   * blocks in the blockchain
   * transactions in a block
   * accounts
+
+![preview of the project](./preview.gif)
   
 [Etherscan](https://etherscan.io/) is a good example of an Ethereum blockexplorer. 
 
